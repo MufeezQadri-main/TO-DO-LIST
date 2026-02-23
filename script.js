@@ -1,5 +1,5 @@
 const todoInput = document.getElementById('todoInput')
-const addBtn = document.getElementById('addBtn')
+const addBtn = document.getElementById('addBtn') 
 const todoList = document.getElementById('todoList')
 const taskCount = document.getElementById('taskCount')
 const filterButton = document.querySelectorAll('.filterBtn')
@@ -46,15 +46,29 @@ function refreshTasks(){
             li.classList.add('completed')
         }
         
+        // --- NEW: Create the tick box (checkbox) ---
+        const checkbox = document.createElement('input')
+        checkbox.type = 'checkbox'
+        checkbox.checked = task.completed // If the task is done, check the box!
+        checkbox.style.marginRight = '10px' // Adds a little space between the box and the text
+        checkbox.style.cursor = 'pointer'
+
+        // When the checkbox is clicked, update the task status
+        checkbox.addEventListener('change', function() {
+            task.completed = checkbox.checked // Sets it to true if checked, false if unchecked
+            saveAndRefresh()
+        })
+        
         const span = document.createElement('span')
         span.className = "taskText"
         span.textContent = task.text
 
+        // We can keep this so clicking the text ALSO checks the box
         span.addEventListener('click',  function (){
             task.completed = !task.completed
             saveAndRefresh()
         })
-        //li ke ander element to alag alag rakhne ke liye div element
+        
         const div = document.createElement("div")
         div.className = 'actions'
 
@@ -80,6 +94,9 @@ function refreshTasks(){
 
         div.appendChild(editBtn)
         div.appendChild(deleteBtn)
+        
+        // --- NEW: Add the checkbox to the list item BEFORE the text ---
+        li.appendChild(checkbox)
         li.appendChild(span)
         li.appendChild(div)
 
@@ -93,14 +110,14 @@ function refreshTasks(){
             pendingTask++
         }
     }
-    taskCount.textContent = pendingTask + 'tasks remains'
+    taskCount.textContent = pendingTask + ' tasks remains'
 }
 
 filterButton.forEach (function(button){
     button.addEventListener('click', function(){
         filterButton.forEach (btn => btn.classList.remove('active'))
-        btn.classList.add('active')
-        allTasks = btn.getAttribute('data-filter')
+        button.classList.add('active')
+        allTasks = button.getAttribute('data-filter')
         refreshTasks()
     })
 })
